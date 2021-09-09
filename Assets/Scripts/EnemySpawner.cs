@@ -4,20 +4,36 @@ using UnityEngine;
 
 public class EnemySpawner : MonoBehaviour
 {
-    public Transform prefabEnemy;
-    public float spawnTimeGap = 1.0f;
+    //public Transform prefabEnemy;
+    //public float spawnTimeGap = 1.0f;
+    public InfoWave[] infoWaves;
+    private bool canSpawn = false;
 
-    void Start(){
-        StartCoroutine(Spawn());
+    private void Update() {
+        CheckSpawn();
     }
-
-    IEnumerator Spawn()
-    {
-        while(true)
-        {
-            Transform transEnemy = Instantiate(prefabEnemy);
-            transEnemy.position = new Vector3(Random.Range(-2.5f,2.5f),4.6f,0);
-            yield return new WaitForSeconds(spawnTimeGap);
+    public void CheckSpawn(){
+        for(int i = 0; i < infoWaves.Length; i++){
+            if(LevelManager.Instance.levelTimer > infoWaves[i].spawnTime && !infoWaves[i].hasSpawned){
+                StartCoroutine(SpawnWave(i, infoWaves[i].spawnTimeGap));
+                infoWaves[i].hasSpawned = true;
+            }
         }
+    }
+    IEnumerator SpawnWave(int waveIndex, float timeGap)
+    {
+        foreach(Transform prefabEnemy in infoWaves[waveIndex].prefabEnemies){
+            prefabEnemy.position = infoWaves[waveIndex].routes[0].GetChild(0).position;  // 防止闪现
+            prefabEnemy.GetComponent<EnemyController>().routes = infoWaves[waveIndex].routes;
+            Transform transEnemy = Instantiate(prefabEnemy);
+            yield return new WaitForSeconds(timeGap);
+        }
+    }
+    public void StartSpawn(){
+        canSpawn = true;
+    }
+    public void StopSpawn(){
+        canSpawn = false;
+        StopAllCoroutines();
     }
 }

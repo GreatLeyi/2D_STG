@@ -2,26 +2,17 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EnemyController : MonoBehaviour
+public class FollowRoutes : MonoBehaviour
 {
-    public float speedModifier = 0.5f;
-    public float angleOffset = 0.0f;    
-    public Transform prefabExplosion;
-
-    // 发射子弹
-    private bool isVisible = false;
-    public float FireGap = 1.0f;
-    public Transform prefabBullet;
-    private bool fireAllowed = true;  // 用于锁开火协程
-
-    // 贝塞尔移动
-    [HideInInspector]
-    public Transform[] routes;  // 每个route实际上就是四个贝塞尔曲线控制点，由EnemySpawner决定
-
+    [SerializeField]
+    private Transform[] routes;  // 每个route实际上就是四个贝塞尔曲线控制点
     private int routeToGo;
     private float paramT;  // bezier Param t
     private Vector2 positionToGo;
     private Vector2 tangentToGo;  // 切线向量
+
+    [SerializeField]
+    private float speedModifier = 0.5f;
     private bool coroutineAllowed;
     private Vector2[] controlPoints;
 
@@ -31,48 +22,11 @@ public class EnemyController : MonoBehaviour
         coroutineAllowed = true;
         controlPoints = new Vector2[4];
     }
-    private void Update()
-    {
-        // Move
+    private void Update() {
         if(coroutineAllowed){
             StartCoroutine(GoByTheRoute(routeToGo));
         }
-        if(fireAllowed && isVisible){
-            StartCoroutine(Fire());
-        }
     }
-
-    private IEnumerator Fire(){
-        fireAllowed = false;
-        while(isVisible){
-            Transform bullet = Instantiate(prefabBullet, transform.position, Quaternion.identity);
-            yield return new WaitForSeconds(FireGap);
-        }
-        fireAllowed = true;
-    }
-    private void OnBecameVisible() {
-        isVisible = true;
-    }
-    private void OnBecameInvisible()
-    {
-        isVisible = false;
-    }
-
-    private void OnTriggerEnter2D(Collider2D other) 
-    {
-        if(other.gameObject.layer == LayerMask.NameToLayer("PlayerBullet"))
-        {
-            Transform transExplosion = Instantiate(prefabExplosion, transform.position, Quaternion.identity);  
-            Destroy(gameObject);
-        }
-    }
-    private void OnTriggerExit2D(Collider2D other) {
-        if(other.gameObject.layer == LayerMask.NameToLayer("DeathSideBoundary"))
-        {
-            Destroy(gameObject);
-        }
-    }
-
     private IEnumerator GoByTheRoute(int routeIndex){
         coroutineAllowed =false;
         for(int i = 0; i < 4; i++){
@@ -85,7 +39,7 @@ public class EnemyController : MonoBehaviour
             tangentToGo = BezierDerivative();
             
             transform.position = positionToGo;
-            transform.rotation = Quaternion.Euler(0, 0, angleOffset + Mathf.Rad2Deg * Mathf.Atan2(tangentToGo.y, tangentToGo.x));
+            transform.rotation = Quaternion.Euler(0, 0, Mathf.Rad2Deg * Mathf.Atan2(tangentToGo.y, tangentToGo.x));
             yield return new WaitForEndOfFrame();
         }
 

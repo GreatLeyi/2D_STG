@@ -7,17 +7,11 @@ public class PlayerController : MonoBehaviour
     public float speed = 5.0f;
     public Transform prefabBullet;
     public Transform prefabExplosion;
-
-    public GameObject boundary_lt;
-    public GameObject boundary_rb;
-    private float xMin, xMax,yMin,yMax;
+    private Rigidbody2D rb;
     // Start is called before the first frame update
     void Start()
     {
-        xMin = boundary_lt.transform.position.x;
-        xMax = boundary_rb.transform.position.x;
-        yMin = boundary_rb.transform.position.y;
-        yMax = boundary_lt.transform.position.y;
+        rb = GetComponent<Rigidbody2D>();
     }
 
     // Update is called once per frame
@@ -35,8 +29,7 @@ public class PlayerController : MonoBehaviour
 
     void Move(float h, float v)
     {
-        transform.position += new Vector3(h, v, 0) * speed * Time.deltaTime;
-        transform.position = new Vector3(Mathf.Clamp(transform.position.x, xMin, xMax), Mathf.Clamp(transform.position.y, yMin, yMax), 0);
+        rb.velocity = new Vector2(h, v) * speed;
     }
 
     void FireNormal()
@@ -46,9 +39,9 @@ public class PlayerController : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other) 
     {
+        
         if(other.gameObject.layer == LayerMask.NameToLayer("EnemyBullet")||other.gameObject.layer == LayerMask.NameToLayer("Enemy"))
         {
-            // TODO: Player Die
             Debug.Log("Player died!");
             Transform transExplosion = Instantiate(prefabExplosion, transform.position, Quaternion.identity); 
             Destroy(gameObject);

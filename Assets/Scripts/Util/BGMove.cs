@@ -12,6 +12,7 @@ public class BGMove : MonoBehaviour
         BGspriteRenderer = GetComponent<SpriteRenderer>();
     }
 
+
     // Update is called once per frame
     void Update()
     {

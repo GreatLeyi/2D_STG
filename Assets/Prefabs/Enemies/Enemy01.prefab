@@ -144,10 +144,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b403e810de8b2194c8384cafcf768e06, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speedModifier: 0.5
   angleOffset: -90
   prefabExplosion: {fileID: 2052159258201813327, guid: ca02b2cc39b33b44c87b9b3ed6f44c80, type: 3}
-  FireGap: 1
+  speedModifier: 0.5
+  hp: 2
+  dropProbability: 1
+  prefabDropItem: {fileID: 4555301212974458495, guid: b97463f99635a1043acdd9ccc2ccf6a0, type: 3}
   prefabBullet: {fileID: 9163355057175331534, guid: 7e21930c8ed062a45a5bc2e9596914cd, type: 3}
   routes:
   - {fileID: 6949773772354026144, guid: 9b380640da815fa49a2349c86c5c0222, type: 3}

@@ -7,14 +7,18 @@ public class EnemySpawner : MonoBehaviour
     //public Transform prefabEnemy;
     //public float spawnTimeGap = 1.0f;
     public InfoWave[] infoWaves;
-    private bool canSpawn = false;
+    private bool canSpawn = true;
 
     private void Update() {
-        CheckSpawn();
+        if (canSpawn)
+        {
+            CheckSpawn();
+        }
     }
     public void CheckSpawn(){
         for(int i = 0; i < infoWaves.Length; i++){
-            if(LevelManager.Instance.levelTimer > infoWaves[i].spawnTime && !infoWaves[i].hasSpawned){
+            if(LevelManager.Instance.levelTimer > infoWaves[i].spawnTime && !infoWaves[i].hasSpawned)
+            {
                 StartCoroutine(SpawnWave(i, infoWaves[i].spawnTimeGap));
                 infoWaves[i].hasSpawned = true;
             }

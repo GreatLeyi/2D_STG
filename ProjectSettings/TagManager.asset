@@ -3,7 +3,9 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - Item_Rof
+  - Item_BulletAmount
   layers:
   - Default
   - TransparentFX
@@ -16,8 +18,8 @@ TagManager:
   - EnemyBullet
   - Enemy
   - DeathSideBoundary
-  - PlayerBounary
-  - 
+  - PlayerBoundary
+  - Item
   - 
   - 
   - 

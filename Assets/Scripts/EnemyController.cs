@@ -4,14 +4,21 @@ using UnityEngine;
 
 public class EnemyController : MonoBehaviour
 {
-    public float speedModifier = 0.5f;
     public float angleOffset = 0.0f;    
     public Transform prefabExplosion;
 
+    // 基础属性
+    public float speedModifier = 0.5f;
+    public int hp = 2;
+
+    // 掉落道具
+    [SerializeField] private float dropProbability = 1.0f;
+    [SerializeField] private Transform prefabDropItem;  // 一种敌人掉落一种道具
+
     // 发射子弹
     private bool isVisible = false;
-    public float FireGap = 1.0f;
-    public Transform prefabBullet;
+    private float FireGap = 1.0f;
+    [SerializeField] public Transform prefabBullet;
     private bool fireAllowed = true;  // 用于锁开火协程
 
     // 贝塞尔移动
@@ -62,8 +69,17 @@ public class EnemyController : MonoBehaviour
     {
         if(other.gameObject.layer == LayerMask.NameToLayer("PlayerBullet"))
         {
-            Transform transExplosion = Instantiate(prefabExplosion, transform.position, Quaternion.identity);  
-            Destroy(gameObject);
+            hp -= other.GetComponent<BulletController>().damage;
+            Destroy(other.gameObject);
+            if (hp <= 0)
+            {
+                Transform transExplosion = Instantiate(prefabExplosion, transform.position, Quaternion.identity);
+                if(Random.Range(0,1) < dropProbability)
+                {
+                    Instantiate(prefabDropItem, transform.position, Quaternion.identity);
+                }
+                Destroy(gameObject);
+            }
         }
     }
     private void OnTriggerExit2D(Collider2D other) {

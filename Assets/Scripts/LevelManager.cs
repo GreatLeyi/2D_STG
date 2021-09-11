@@ -6,14 +6,17 @@ using UnityEngine.SceneManagement;
 public class LevelManager : MonoBehaviour
 {
     public static LevelManager Instance{get; private set;}
-    public EnemySpawner enemySpawner;
-    [SerializeField]
-    private GameObject prefabPlayer;
-    public Transform spawnPoint;
-    public GameObject panelGameOver;
-    public float levelTimer;
+    [SerializeField] private EnemySpawner enemySpawner;
+    [SerializeField] private GameObject prefabPlayer;
+    [SerializeField] private Transform spawnPoint;
+
+    [SerializeField] private GameObject panelGameOver;
+    [SerializeField] private GameObject playerInfoView;
+
+    public float levelTimer { get; private set; }
     private float levelStartTime;
     private float levelEndTime;
+
     [HideInInspector]
     public GameObject player;
 
@@ -23,6 +26,7 @@ public class LevelManager : MonoBehaviour
     void Start()
     {
         panelGameOver.SetActive(false);
+        playerInfoView.SetActive(true);
         StartLevel();
     }
 
@@ -42,8 +46,12 @@ public class LevelManager : MonoBehaviour
         panelGameOver.SetActive(true);
     }
 
-    public void RestartLevel(){
-        Debug.Log("Restart Level");
+    public void RestartLevel(bool clearPrefs){
+        Debug.Log("Restart Level With cleanning");
+        if (clearPrefs)
+        {
+            PlayerPrefs.DeleteAll();
+        }
         SceneManager.LoadScene(0);
     }
 

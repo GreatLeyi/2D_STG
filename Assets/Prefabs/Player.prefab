@@ -93,6 +93,7 @@ GameObject:
   - component: {fileID: 2570269810796194786}
   - component: {fileID: 2570269810796194787}
   - component: {fileID: 2570269810796194788}
+  - component: {fileID: 2177645673064828620}
   - component: {fileID: 2570269810796194789}
   - component: {fileID: 2570269810796194790}
   m_Layer: 7
@@ -183,6 +184,27 @@ MonoBehaviour:
   speed: 5
   prefabBullet: {fileID: 8655112017685126007, guid: ea1dd1addd83f8e4f9f75be2ce502971, type: 3}
   prefabExplosion: {fileID: 2052159258201813327, guid: ca02b2cc39b33b44c87b9b3ed6f44c80, type: 3}
+  objPlayerModel: {fileID: 0}
+  objPlayerInfoView: {fileID: 0}
+--- !u!114 &2177645673064828620
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2570269810796194791}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1d404e2a74b0ae34a8c961427318edde, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  defaultPlayerHealth: 3
+  minPlayerHealth: 0
+  maxPlayerHealth: 10
+  minPlayerRof: 1
+  maxPlayerRof: 10
+  minPlayerBulletAmount: 1
+  maxPlayerBulletAmount: 10
 --- !u!50 &2570269810796194789
 Rigidbody2D:
   serializedVersion: 4

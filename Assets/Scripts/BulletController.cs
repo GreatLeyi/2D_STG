@@ -8,6 +8,7 @@ public class BulletController : MonoBehaviour
     public Vector3 initDirection = new Vector3(0, 1, 0);
     public bool isSniper = false;  // 是自机狙
     public int damage = 1;
+    public bool isPlayerBullet = false;  // 用于将画面外的玩家子弹清除，防止提前杀怪
 
     private void Start() {
         if(isSniper){
@@ -21,6 +22,16 @@ public class BulletController : MonoBehaviour
     void Update()
     {
         transform.Translate(speed * Time.deltaTime * initDirection);
+    }
+
+    private void OnTriggerExit2D(Collider2D other)
+    {
+        if (other.gameObject.layer == LayerMask.NameToLayer("DeathSideBoundary") || 
+            other.gameObject.layer == LayerMask.NameToLayer("BulletBoundary"))
+        {
+            // Debug.Log("Bullet exits DeathSideBoundary");
+            Destroy(gameObject);
+        }
     }
 
     void OnBecameInvisible()

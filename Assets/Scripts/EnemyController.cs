@@ -7,6 +7,8 @@ public class EnemyController : MonoBehaviour
     public float angleOffset = 0.0f;    
     public Transform prefabExplosion;
 
+    private SpriteRenderer spriteRenderer;
+
     // 基础属性
     public float speedModifier = 0.5f;
     public int hp = 2;
@@ -17,12 +19,12 @@ public class EnemyController : MonoBehaviour
 
     // 发射子弹
     private bool isVisible = false;
-    private float FireGap = 1.0f;
+    [SerializeField] private float FireGap = 1.0f;
     [SerializeField] public Transform prefabBullet;
     private bool fireAllowed = true;  // 用于锁开火协程
 
     // 贝塞尔移动
-    [HideInInspector]
+    //[HideInInspector]
     public Transform[] routes;  // 每个route实际上就是四个贝塞尔曲线控制点，由EnemySpawner决定
 
     private int routeToGo;
@@ -33,6 +35,7 @@ public class EnemyController : MonoBehaviour
     private Vector2[] controlPoints;
 
     private void Start() {
+        spriteRenderer = GetComponent<SpriteRenderer>();
         routeToGo = 0;
         paramT = 0.0f;
         coroutineAllowed = true;
@@ -41,21 +44,26 @@ public class EnemyController : MonoBehaviour
     private void Update()
     {
         // Move
-        if(coroutineAllowed){
+        if(routes.Length != 0 && coroutineAllowed){
             StartCoroutine(GoByTheRoute(routeToGo));
         }
-        if(fireAllowed && isVisible){
+        // Fire
+        if (prefabBullet != null && fireAllowed && isVisible)
+        {
             StartCoroutine(Fire());
         }
     }
 
-    private IEnumerator Fire(){
-        fireAllowed = false;
-        while(isVisible){
-            Transform bullet = Instantiate(prefabBullet, transform.position, Quaternion.identity);
-            yield return new WaitForSeconds(FireGap);
-        }
-        fireAllowed = true;
+    // 可见时才会发射子弹
+    private IEnumerator Fire()
+    {
+            fireAllowed = false;
+            while (isVisible)
+            {
+                Transform bullet = Instantiate(prefabBullet, transform.position, Quaternion.identity);
+                yield return new WaitForSeconds(FireGap);
+            }
+            fireAllowed = true;
     }
     private void OnBecameVisible() {
         isVisible = true;
@@ -70,11 +78,15 @@ public class EnemyController : MonoBehaviour
         if(other.gameObject.layer == LayerMask.NameToLayer("PlayerBullet"))
         {
             hp -= other.GetComponent<BulletController>().damage;
+            StartCoroutine(FlashColor(spriteRenderer, Color.red));
             Destroy(other.gameObject);
+
+
             if (hp <= 0)
             {
                 Transform transExplosion = Instantiate(prefabExplosion, transform.position, Quaternion.identity);
-                if(Random.Range(0,1) < dropProbability)
+                // 概率掉落
+                if (((float)Random.Range(0, 100)) / 100.0f < dropProbability)
                 {
                     Instantiate(prefabDropItem, transform.position, Quaternion.identity);
                 }
@@ -127,5 +139,12 @@ public class EnemyController : MonoBehaviour
                  3 * controlPoints[1] * (Mathf.Pow( 1 - paramT, 2) - 2 * paramT * (1 - paramT)) +
                  3 * controlPoints[2] * (2 * paramT * (1-paramT) - Mathf.Pow(paramT,2)) + 
                  3 * controlPoints[3] * Mathf.Pow(paramT, 2);
+    }
+    IEnumerator FlashColor(SpriteRenderer renderer, Color targetColor)
+    {
+        Color originColor = renderer.color;
+        renderer.color = targetColor;
+        yield return new WaitForSeconds(0.2f);
+        renderer.color = originColor;
     }
 }

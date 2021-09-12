@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class PlayerInfoView : MonoBehaviour
 {
-    public static PlayerInfoView Instance { get; private set; }
+    //public static PlayerInfoView Instance { get; private set; }
     private Color initColor;
 
     [SerializeField] private Text txtPlayerHealth;
@@ -18,7 +18,7 @@ public class PlayerInfoView : MonoBehaviour
 
     private void Awake()
     {
-        Instance = this;
+        //Instance = this;
         initColor = txtPlayerHealth.color;
     }
     // update view

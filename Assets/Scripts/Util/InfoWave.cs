@@ -8,5 +8,5 @@ public class InfoWave
     public float spawnTimeGap = 1.0f;
     public Transform[] prefabEnemies;
     public Transform[] routes;
-    public bool hasSpawned = false;
+    [HideInInspector] public bool hasSpawned = false;
 }

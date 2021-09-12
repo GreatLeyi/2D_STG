@@ -9,9 +9,10 @@ public class LevelManager : MonoBehaviour
     [SerializeField] private EnemySpawner enemySpawner;
     [SerializeField] private GameObject prefabPlayer;
     [SerializeField] private Transform spawnPoint;
+    [SerializeField] private Camera mainCamera;
 
-    [SerializeField] private GameObject panelGameOver;
-    [SerializeField] private GameObject playerInfoView;
+    //背景音乐
+    [SerializeField] private MusicPlayer musicPlayer;
 
     public float levelTimer { get; private set; }
     private float levelStartTime;
@@ -25,8 +26,6 @@ public class LevelManager : MonoBehaviour
     }
     void Start()
     {
-        panelGameOver.SetActive(false);
-        playerInfoView.SetActive(true);
         StartLevel();
     }
 
@@ -35,24 +34,56 @@ public class LevelManager : MonoBehaviour
     }
 
     public void StartLevel(){
+        // 初始化UI
+        UIManager.Instance.panelGameOver.SetActive(false);
+        UIManager.Instance.playerInfoView.SetActive(true);
+
+        // 播放音乐
+        musicPlayer.StopPlayingMusic();  // 结束fade的速率很快，远大于开始
+        musicPlayer.StartPlayingMusic();
+        musicPlayer.SetSpatialBlend(0.0f);
+
+        // 玩家初始化
         player = Instantiate(prefabPlayer, spawnPoint.position, Quaternion.identity);
+
+        // 开始计时
         levelStartTime = Time.time;
+
+        // 开始生成敌人
         enemySpawner.StartSpawn();
     }
     public void OnGameOver(){
         Debug.Log("Game Over");
         levelEndTime = Time.time;
         enemySpawner.StopSpawn();
-        panelGameOver.SetActive(true);
+        UIManager.Instance.panelGameOver.SetActive(true);
+
+        musicPlayer.SetSpatialBlend(0.8f);
     }
 
     public void RestartLevel(bool clearPrefs){
-        Debug.Log("Restart Level With cleanning");
+        Debug.Log("Restart Level");
         if (clearPrefs)
         {
             PlayerPrefs.DeleteAll();
         }
-        SceneManager.LoadScene(0);
+        // SceneManager.LoadScene(0);
+        // 因为初期用layer区分物体种类，这里不能用findwithtag，很难受
+        GameObject[] gos = FindObjectsOfType(typeof(GameObject)) as GameObject[];
+        foreach (GameObject go in gos)
+        {
+            if( go.layer == LayerMask.NameToLayer("PlayerBullet") ||
+                go.layer == LayerMask.NameToLayer("Player") ||
+                go.layer == LayerMask.NameToLayer("EnemyBullet") ||
+                go.layer == LayerMask.NameToLayer("Enemy") ||
+                go.layer == LayerMask.NameToLayer("Item")
+                )
+            {
+                Destroy(go);
+            }
+        }
+
+        StartLevel();
     }
 
     public void QuitGame(){
@@ -62,5 +93,11 @@ public class LevelManager : MonoBehaviour
         #else
                 Application.Quit();
         #endif
+    }
+
+    // 本来用于检测子弹是否飞出Main Camera，但考虑到性能还是换用碰撞体解决
+    public bool IsInMainCamera(Renderer renderer)
+    {
+        return mainCamera.IsObjectVisible(renderer);
     }
 }

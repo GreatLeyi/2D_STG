@@ -7,7 +7,14 @@ public class EnemySpawner : MonoBehaviour
     //public Transform prefabEnemy;
     //public float spawnTimeGap = 1.0f;
     public InfoWave[] infoWaves;
-    private bool canSpawn = true;  
+    private bool canSpawn = false;
+    private bool spawnFinished = false;
+    private bool hasBossGenerated = false;
+
+    // Boss
+    public Transform prefabBoss;
+    public GameObject bossStartPosition;
+    public GameObject bossEndPosition;
 
     private void Update() {
         if (canSpawn)
@@ -17,7 +24,7 @@ public class EnemySpawner : MonoBehaviour
     }
     // 每一帧检查波次时间
     public void CheckSpawn(){
-        bool spawnFinished = true;
+        spawnFinished = true;
         // 轮询每个波次，可优化
         for(int i = 0; i < infoWaves.Length; i++){
             spawnFinished &= infoWaves[i].hasSpawned;
@@ -42,13 +49,13 @@ public class EnemySpawner : MonoBehaviour
         }
     }
     public void StartSpawn(){
-        canSpawn = true;
-
         // 重置波次生成状态
+        hasBossGenerated = false;
         for (int i = 0; i < infoWaves.Length; i++)
         {
             infoWaves[i].hasSpawned = false;
         }
+        canSpawn = true;
     }
     public void StopSpawn(){
         canSpawn = false;
@@ -56,7 +63,15 @@ public class EnemySpawner : MonoBehaviour
     }
     public void OnSpawnFinished()
     {
-        Debug.Log("Spawn Finished !");
-        // TODO: 出Boss
+        if (!hasBossGenerated)
+        {
+            Debug.Log("Spawn Finished, BOSS !");
+            // 生成Boss
+            Transform transBoss = Instantiate(prefabBoss, bossStartPosition.transform.position, Quaternion.identity);
+            transBoss.GetComponent<BossController>().targetPosition = bossEndPosition;
+            transBoss.GetComponent<BossController>().canMove = true;
+            transBoss.rotation = Quaternion.Euler(0, 0, transBoss.GetComponent<BossController>().angleOffset);
+            hasBossGenerated = true;
+        }
     }
 }

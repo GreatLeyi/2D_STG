@@ -23,6 +23,9 @@ public class EnemyController : MonoBehaviour
     [SerializeField] public Transform prefabBullet;
     private bool fireAllowed = true;  // 用于锁开火协程
 
+    // 闪烁特效的锁
+    private bool isFlashing = false;
+
     // 贝塞尔移动
     //[HideInInspector]
     public Transform[] routes;  // 每个route实际上就是四个贝塞尔曲线控制点，由EnemySpawner决定
@@ -80,7 +83,6 @@ public class EnemyController : MonoBehaviour
             hp -= other.GetComponent<BulletController>().damage;
             StartCoroutine(FlashColor(spriteRenderer, Color.red));
             Destroy(other.gameObject);
-
 
             if (hp <= 0)
             {
@@ -142,9 +144,16 @@ public class EnemyController : MonoBehaviour
     }
     IEnumerator FlashColor(SpriteRenderer renderer, Color targetColor)
     {
-        Color originColor = renderer.color;
-        renderer.color = targetColor;
-        yield return new WaitForSeconds(0.2f);
-        renderer.color = originColor;
+        if (!isFlashing)
+        {
+            isFlashing = true;
+
+            Color originColor = renderer.color;
+            renderer.color = targetColor;
+            yield return new WaitForSeconds(0.2f);
+            renderer.color = originColor;
+
+            isFlashing = false;
+        }
     }
 }

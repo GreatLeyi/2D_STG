@@ -11,6 +11,9 @@ public class LevelManager : MonoBehaviour
     [SerializeField] private Transform spawnPoint;
     [SerializeField] private Camera mainCamera;
 
+    // 记录死亡次数
+    private int deathTimes = 0;
+
     //背景音乐
     [SerializeField] private MusicPlayer musicPlayer;
 
@@ -24,9 +27,14 @@ public class LevelManager : MonoBehaviour
     private void Awake() {
         Instance = this;
     }
-    void Start()
+    private void Start()
     {
-        StartLevel();
+        UIManager.Instance.UpdateDeathTimes();
+        UIManager.Instance.panelGameStart.SetActive(true);
+
+        UIManager.Instance.panelGameOver.SetActive(false);
+        UIManager.Instance.playerInfoView.SetActive(false);
+        UIManager.Instance.panelGameWinning.SetActive(false);
     }
 
     private void Update() {
@@ -35,8 +43,11 @@ public class LevelManager : MonoBehaviour
 
     public void StartLevel(){
         // 初始化UI
-        UIManager.Instance.panelGameOver.SetActive(false);
         UIManager.Instance.playerInfoView.SetActive(true);
+
+        UIManager.Instance.panelGameOver.SetActive(false);
+        UIManager.Instance.panelGameWinning.SetActive(false);
+        UIManager.Instance.panelGameStart.SetActive(false);
 
         // 播放音乐
         musicPlayer.StopPlayingMusic();  // 结束fade的速率很快，远大于开始
@@ -56,15 +67,27 @@ public class LevelManager : MonoBehaviour
         Debug.Log("Game Over");
         levelEndTime = Time.time;
         enemySpawner.StopSpawn();
+
+        deathTimes = PlayerPrefs.GetInt("PlayerDeathTimes", 0);
+        deathTimes++;
+        PlayerPrefs.SetInt("PlayerDeathTimes", deathTimes);
+
+        UIManager.Instance.UpdateDeathTimes();
         UIManager.Instance.panelGameOver.SetActive(true);
 
         musicPlayer.SetSpatialBlend(0.8f);
     }
 
+    // 由UI按钮引用
     public void RestartLevel(bool clearPrefs){
         Debug.Log("Restart Level");
+        UIManager.Instance.playerInfoView.SetActive(true);
+        
         if (clearPrefs)
         {
+            deathTimes = 0;
+            PlayerPrefs.SetInt("PlayerDeathTimes", deathTimes);
+
             PlayerPrefs.DeleteAll();
         }
         // SceneManager.LoadScene(0);
@@ -86,6 +109,7 @@ public class LevelManager : MonoBehaviour
         StartLevel();
     }
 
+    // 由UI按钮引用
     public void QuitGame(){
         Debug.Log("Quit game");
         #if UNITY_EDITOR
@@ -99,5 +123,11 @@ public class LevelManager : MonoBehaviour
     public bool IsInMainCamera(Renderer renderer)
     {
         return mainCamera.IsObjectVisible(renderer);
+    }
+    public void OnGameWinning()
+    {
+        // TODO: 展示成功界面
+        Debug.Log("Winning!");
+        UIManager.Instance.panelGameWinning.SetActive(true);
     }
 }

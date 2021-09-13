@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
 {
@@ -8,6 +9,9 @@ public class UIManager : MonoBehaviour
 
     public GameObject panelGameOver;
     public GameObject playerInfoView;
+    public GameObject panelGameWinning;
+    public GameObject panelGameStart;
+    public Text[] txtDeathTimes;  // 可能有多个承载死亡次数的Text
 
     private void Awake()
     {
@@ -16,14 +20,12 @@ public class UIManager : MonoBehaviour
             Instance = this;
         }
     }
-    void Start()
+    public void UpdateDeathTimes()
     {
-
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        int deathTimes = PlayerPrefs.GetInt("PlayerDeathTimes", 0);
+        for (int i = 0; i < txtDeathTimes.Length; i++)
+        {
+            txtDeathTimes[i].text = "x " + deathTimes.ToString();
+        }
     }
 }

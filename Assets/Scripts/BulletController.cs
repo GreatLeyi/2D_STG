@@ -4,11 +4,15 @@ using UnityEngine;
 
 public class BulletController : MonoBehaviour
 {
-    public float speed = 15.0f;
-    public Vector3 initDirection = new Vector3(0, 1, 0);
+    //子弹基本属性
+    public float speed = 3.0f;
+    public float rotateRate = 0.0f;
     public bool isSniper = false;  // 是自机狙
     public int damage = 1;
-    public bool isPlayerBullet = false;  // 用于将画面外的玩家子弹清除，防止提前杀怪
+    // 子弹初始方向
+    public Vector3 initDirection = new Vector3(0, 1, 0);
+
+    // public bool isPlayerBullet = false;  // 用于将画面外的玩家子弹清除，防止提前杀怪
 
     private void Start() {
         if(isSniper){
@@ -21,6 +25,7 @@ public class BulletController : MonoBehaviour
 
     void Update()
     {
+        transform.Rotate(new Vector3(0, 0, rotateRate * Time.deltaTime));
         transform.Translate(speed * Time.deltaTime * initDirection);
     }
 

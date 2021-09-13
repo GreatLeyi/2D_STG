@@ -96,7 +96,7 @@ public class PlayerController : MonoBehaviour
         }
         else if(other.gameObject.layer == LayerMask.NameToLayer("Item"))
         {
-            Debug.Log("Player meets item: " + other.gameObject.name);
+            // Debug.Log("Player meets item: " + other.gameObject.name);
             //播放音效
             audioSource.PlayOneShot(audioGetItem);
 
@@ -121,7 +121,7 @@ public class PlayerController : MonoBehaviour
 
             StartCoroutine(FlashColor(spriteRenderer, Color.red));
 
-            Debug.Log("Player damaged!");
+            // Debug.Log("Player damaged!");
             Transform transExplosion = Instantiate(prefabExplosion, transform.position, Quaternion.identity);
             playerModel.DecreasePlayerHealth(damage);
             // 受伤有可能掉Power

@@ -152,14 +152,18 @@ MonoBehaviour:
   angleOffset: 180
   prefabExplosion: {fileID: 2052159258201813327, guid: ca02b2cc39b33b44c87b9b3ed6f44c80, type: 3}
   speed: 0.01
-  hp: 200
+  hp: 1000
   targetPosition: {fileID: 0}
   canMove: 0
   isOnTarget: 0
   isVisible: 0
+  periodPerRound: 10
+  inRound: 0
   fireAllowed: 0
   fireGap: 1
+  bulletSpeed: 1
   bulletAmount: 10
+  bulletCounter: 0
   prefabBullet: {fileID: 543930589151997292, guid: fd3c7ec9a9d8cc942855d9160f79f2ee, type: 3}
   fireSources:
   - {fileID: 8043949657480545417}
